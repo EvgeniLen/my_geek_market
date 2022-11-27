@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,9 +15,11 @@ import java.util.List;
 public class BasketDto {
 
     private Long id;
+    private UserDto user;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
-    private UserDto owner;
 
-    //private List<ProductDto> productList = new ArrayList<>();
-
+    public BasketDto(UserDto user) {
+        this.user = user;
+    }
 }

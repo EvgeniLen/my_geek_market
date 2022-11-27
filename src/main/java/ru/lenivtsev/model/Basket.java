@@ -3,9 +3,12 @@ package ru.lenivtsev.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,12 +20,25 @@ public class Basket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne
-    private User owner;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-//    @ManyToMany(mappedBy = "basketList")
-//    private List<Product> productList = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "basket")
+    private List<BasketItem> basketItems;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
+
+    @Column(name = "create_at", updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createAt;
+
+    @Column(name = "update_at")
+    @UpdateTimestamp
+    private LocalDateTime updateAt;
 
 }

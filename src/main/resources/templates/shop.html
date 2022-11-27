@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace="fragments/head.html :: head">
+
+</head>
+
+<body>
+
+<nav th:replace="fragments/head.html :: navigation">
+
+</nav>
+
+<div class="container">
+    <div class="row py-2">
+        <!--<div class="col-12">
+            <a class="btn btn-primary" th:href="@{/product/new}">Add Product</a>
+        </div>-->
+
+        <div class="col-12 mt-3">
+            <form class="form-inline">
+                <div class="form-group mb-2 mr-2">
+                    <label for="productTitleFilter" class="sr-only" >Product title filter</label>
+                    <input type="text" class="form-control" id="productTitleFilter"
+                           name="productTitleFilter" placeholder="Filter by title" th:value="${param.productTitleFilter}">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Apply</button>
+            </form>
+        </div>
+        <div class="col-12 mt-3">
+            <form class="form-inline">
+                <div class="form-group mb-2 mr-2">
+                    <label for="productPriceFilter" class="sr-only" >Product price filter</label>
+                    <input type="text" class="form-control" id="productPriceFilter"
+                           title="[-1] - the price is less&#013;[1-] - the price is higher&#013;[1-10] - the price between"
+                           name="productPriceFilter" placeholder="Filter by price" th:value="${param.productPriceFilter}">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Apply</button>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <table class="table table-bordered my-2">
+                <thead>
+                <tr>
+                    <th th:replace="fragments/sort_header.html :: sort_header('Id', 'id')"></th>
+                    <th th:replace="fragments/sort_header.html :: sort_header('Product', 'title')"></th>
+                    <th th:replace="fragments/sort_header.html :: sort_header('Price', 'price')"></th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products}">
+                    <th scope="row" th:text="${product.id}"></th>
+                    <td th:text="${product.title}"></td>
+                    <td th:text="${product.price}">0</td>
+                    <td>
+                        <a th:href="@{'/shop/basket/add/' + ${product.id}}" class="btn btn-primary" onclick="sendName()">Добавить в корзину</a>
+                        <!--<a class="btn btn-success" th:href="@{/product/{id}(id = ${product.id})}"><i class="fas fa-edit"></i></a>
+                        <form class="d-inline" th:method="delete" th:action="@{/product/{id}/(id = ${product.id})}">
+                            <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        </form>-->
+
+                        <!--  <form class="d-inline" th:action="@{/basket/{basketId}/{productId}(basketId = ${basket.id}, productId = ${product.id})}" method="post" th:object="${basket}">-->
+<!--                        <form class="d-inline" th:action="@{/basket/{basketId}/{productId}(basketId = ${basket.id}, productId = ${product.id})}" method="post">-->
+<!--                            <button class="btn btn-success"><i class="far fa-basket-alt"></i>Add to basket</button>-->
+<!--                        </form>-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:unless="${products.isEmpty()}" class="col-12">
+<!--        <div class="col-12">-->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+
+                    <li class="page-item" th:classappend="${products.isFirst()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/shop(page=${products.number}, size=${products.size})}">Previous</a>
+                    </li>
+
+                    <li th:each="num : ${#numbers.sequence(1, products.totalPages)}"
+                        th:classappend="${num == products.number + 1} ? 'active'"
+                        class="page-item">
+                        <a class="page-link" th:href="@{/shop(page=${num}, size=${products.size})}">[[${num}]]
+                            <span th:if="${num == products.number + 1}" class="sr-only">(current)</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${products.isLast()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/shop(page=${products.number + 2}, size=${products.size})}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <br>
+    <h1>Корзина</h1>
+
+    <div th:if="${items.size() > 0}" >
+<!--    <div th:unless="${items.isEmpty()}" >-->
+        <table class="table table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>№</th>
+                <th>Название товара</th>
+                <th>Цена за ед.</th>
+                <th>Кол-во</th>
+                <th>Сумма</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="basketItem, itrStat : ${items}">
+                <td th:text="${itrStat.index + 1}"/>
+                <td th:text="${basketItem.getProduct().title}"/>
+                <td th:text="${basketItem.itemPrice}"/>
+                <td th:text="${basketItem.quantity}"/>
+                <td th:text="${basketItem.totalPrice}"/>
+                <td>
+                    <form class="d-inline" th:method="delete" th:action="@{/shop/{id}/(id = ${basketItem.id})}">
+                        <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td/><td/><td/>
+                <td>Итого заказ:</td>
+                <td th:text="${basket.totalPrice}"/>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+
+
+    </div>
+    <div th:unless="${items.size() > 0}" >
+        <span>Ваша корзина пуста</span>
+    </div>
+</div>
+
+<th:block th:replace="fragments/footer.html :: scripts"/>
+</body>
+</html>

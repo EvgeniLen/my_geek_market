@@ -40,7 +40,8 @@ public class SecurityConfiguration {
                     .antMatchers("/**/*/css", "/**/*.js").permitAll()
                     .antMatchers("/").permitAll()
                     .antMatchers("/user/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                    .antMatchers("/product","/product/**" ).hasAnyRole("ADMIN", "SUPER_ADMIN", "CUSTOMER", "MANAGER")
+                    .antMatchers("/product","/product/**" ).hasAnyRole("ADMIN", "SUPER_ADMIN", "MANAGER")
+                    .antMatchers("/shop","/basket/**" ).hasAnyRole("CUSTOMER")
                     .and()
                     .formLogin()
                     .successHandler((request, response, authentication) -> {
@@ -49,8 +50,10 @@ public class SecurityConfiguration {
                                 .collect(Collectors.toSet());
                         if (auths.contains("ROLE_ADMIN") || auths.contains("ROLE_SUPER_ADMIN")){
                             response.sendRedirect("/user");
-                        } else if (auths.contains("ROLE_CUSTOMER")||auths.contains("ROLE_MANAGER")){
+                        } else if (auths.contains("ROLE_MANAGER")){
                             response.sendRedirect("/product");
+                        } else if (auths.contains("ROLE_CUSTOMER")){
+                            response.sendRedirect("/shop");
                         } else {
                             response.sendRedirect("/");
                         }

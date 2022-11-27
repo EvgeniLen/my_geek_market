@@ -52,7 +52,7 @@ public class Product {
     @NotNull(message = "не может быть пустым")
     @DecimalMin(value = "0.01", message = "минимальное значение 0")
     @Digits(integer = 10, fraction = 2)
-    private double price;
+    private BigDecimal price;
 
     @Column(name = "create_at")
     @CreationTimestamp
@@ -67,12 +67,12 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Double.compare(product.price, price) == 0 && Objects.equals(id, product.id) && Objects.equals(category, product.category) && Objects.equals(vendorCode, product.vendorCode) && Objects.equals(title, product.title) && Objects.equals(createAt, product.createAt);
+        return Objects.equals(id, product.id) && Objects.equals(category, product.category) && Objects.equals(vendorCode, product.vendorCode) && Objects.equals(title, product.title) && Objects.equals(shortDescription, product.shortDescription);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, vendorCode);
+        return Objects.hash(id, title);
     }
 
     @Override
