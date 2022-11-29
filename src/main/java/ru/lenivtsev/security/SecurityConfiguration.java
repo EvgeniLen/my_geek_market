@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                     .antMatchers("/user/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                     .antMatchers("/product","/product/**" ).hasAnyRole("ADMIN", "SUPER_ADMIN", "MANAGER")
                     .antMatchers("/shop","/basket/**" ).hasAnyRole("CUSTOMER")
+                    .antMatchers("/statistic").hasAnyRole("CUSTOMER", "ADMIN", "MANAGER")
                     .and()
                     .formLogin()
                     .successHandler((request, response, authentication) -> {
