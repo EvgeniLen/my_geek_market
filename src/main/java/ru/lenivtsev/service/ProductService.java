@@ -34,6 +34,7 @@ public class ProductService {
                 priceFilterMax = matcher.group(2)==null ? null : new BigDecimal(matcher.group(2));
             }
         }
+        //TODO: разобраться с сортировкой
         return productRepository.productByFilter(productTitleFilter, priceFilterMin, priceFilterMax, PageRequest.of(page, size, Sort.by(sortField)))
                 .map(mapper::map);
     }

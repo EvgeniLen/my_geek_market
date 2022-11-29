@@ -16,7 +16,5 @@ public interface BasketRepository extends JpaRepository<Basket, Long> {
             """,
             nativeQuery = true)
     Optional<Basket> findBasketByOwnerId(Long id);
-    //public Basket findBasketByOwner(User owner);
-
 
 }

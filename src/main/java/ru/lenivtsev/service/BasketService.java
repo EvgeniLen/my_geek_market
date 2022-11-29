@@ -39,7 +39,6 @@ public class BasketService {
 
     public Optional<BasketDto> findBasketByOwner(UserDto user) {
         long id = userDtoMapper.map(user).getId();
-        //return basketDtoMapper.map(basketRepository.findBasketByOwnerId(id));
         return basketRepository.findBasketByOwnerId(id).map(basketDtoMapper::map);
     }
 
@@ -79,5 +78,9 @@ public class BasketService {
         } else {
             recalculate(basketDto);
         }
+    }
+
+    public void clearBasket(long id) {
+        basketRepository.deleteById(id);
     }
 }

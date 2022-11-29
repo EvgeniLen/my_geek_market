@@ -1,6 +1,7 @@
 package ru.lenivtsev.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+
 @RequestMapping("/shop")
 @RequiredArgsConstructor
 public class ShopController {
@@ -47,16 +49,24 @@ public class ShopController {
         return "shop";
     }
 
-    @GetMapping("/basket/add/{id}")
-    public String addProductToCart(Model model, @PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
+    @GetMapping("/add/{id}")
+    public String addProductToCart(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         basketService.addToBasket(id);
         return "redirect:/shop";
     }
 
-    @DeleteMapping("{id}")
+    // TODO: добавить переадчу с фронда id корзины, что бы не искать каждый раз в базе
+    @GetMapping("/delete/{id}")
     public String deleteProductById(@PathVariable long id) {
         basketService.deleteItemInBasket(id);
         return "redirect:/shop";
     }
+    @GetMapping("/clear/{id}")
+    public String clearBasket(@PathVariable("id") long id) {
+        basketService.clearBasket(id);
+        return "redirect:/shop";
+    }
 
+
+    // TODO: увеличивать\уменьшать кол-во товаров в корзине
 }

@@ -55,23 +55,13 @@
                     <td th:text="${product.title}"></td>
                     <td th:text="${product.price}">0</td>
                     <td>
-                        <a th:href="@{'/shop/basket/add/' + ${product.id}}" class="btn btn-primary" onclick="sendName()">Добавить в корзину</a>
-                        <!--<a class="btn btn-success" th:href="@{/product/{id}(id = ${product.id})}"><i class="fas fa-edit"></i></a>
-                        <form class="d-inline" th:method="delete" th:action="@{/product/{id}/(id = ${product.id})}">
-                            <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
-                        </form>-->
-
-                        <!--  <form class="d-inline" th:action="@{/basket/{basketId}/{productId}(basketId = ${basket.id}, productId = ${product.id})}" method="post" th:object="${basket}">-->
-<!--                        <form class="d-inline" th:action="@{/basket/{basketId}/{productId}(basketId = ${basket.id}, productId = ${product.id})}" method="post">-->
-<!--                            <button class="btn btn-success"><i class="far fa-basket-alt"></i>Add to basket</button>-->
-<!--                        </form>-->
+                        <a th:href="@{'/shop/add/' + ${product.id}}" class="btn btn-primary" onclick="sendName()">Добавить в корзину</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <div th:unless="${products.isEmpty()}" class="col-12">
-<!--        <div class="col-12">-->
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
 
@@ -101,7 +91,6 @@
     <h1>Корзина</h1>
 
     <div th:if="${items.size() > 0}" >
-<!--    <div th:unless="${items.isEmpty()}" >-->
         <table class="table table-hover">
             <thead class="thead-dark">
             <tr>
@@ -120,7 +109,7 @@
                 <td th:text="${basketItem.quantity}"/>
                 <td th:text="${basketItem.totalPrice}"/>
                 <td>
-                    <form class="d-inline" th:method="delete" th:action="@{/shop/{id}/(id = ${basketItem.id})}">
+                    <form class="d-inline" method="get" th:action="@{/shop/delete/{id}(id = ${basketItem.id})}">
                         <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                     </form>
                 </td>
@@ -129,6 +118,16 @@
                 <td/><td/><td/>
                 <td>Итого заказ:</td>
                 <td th:text="${basket.totalPrice}"/>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a th:href="@{/shop/clear/{id}/(id = ${basket.id})}" class="btn btn-primary" onclick="sendName()">Очистить корзину</a>
+                    <!--<form class="d-inline" method="get" th:action="@{/shop/clear/{id}/(id = ${basket.id})}">
+                        <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                    </form> -->
+                </td>
             </tr>
             </tbody>
         </table>
