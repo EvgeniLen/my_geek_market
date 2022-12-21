@@ -49,9 +49,6 @@ public class User {
         this.roles = roles;
     }
 
-    //@OneToOne
-    //private Basket basket;
-
     public User(String userName) {
         this.userName = this.userName;
     }

@@ -45,7 +45,7 @@ public class ProductController {
             String sortFiledValue = sortField.filter(s -> !s.isBlank()).orElse("id");
 
             UserDto user = userDetailsService.getAuthentication().get();
-            BasketDto basketDto = basketService.findBasketByOwner(user);
+            //BasketDto basketDto = basketService.findBasketByOwner(user).get();
             //model.addAttribute("basket", basketDto);
             model.addAttribute("products", productService.findAllByFilter(productTitleFilter, productCostFilter, pageValue, sizeValue, sortFiledValue));
             return "product";
