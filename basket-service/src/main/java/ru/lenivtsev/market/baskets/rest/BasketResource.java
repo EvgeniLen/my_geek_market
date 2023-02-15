@@ -19,9 +19,9 @@ public class BasketResource {
     private final BasketService basketService;
     private final BasketItemService basketItemService;
 
-    @GetMapping("/{userId}")
-    public BasketDto listPage(@PathVariable("userId") Long userId){
-        return basketService.findBasketByOwner(userId);
+    @GetMapping
+    public BasketDto listPage(@RequestHeader(name = "username", required = false) String username){
+        return basketService.findBasketByOwner(username);
     }
 
     /*@GetMapping("/{userId}")
@@ -30,10 +30,9 @@ public class BasketResource {
                 .orElseThrow(() -> new EntityNotFoundException("B not found"));
     }*/
 
-    @GetMapping("/add/{userId}/{id}")
-    public String addProductToCart(@PathVariable("userId") Long userId, @PathVariable("id") Long id) {
-        basketService.addToBasket(userId, id);
-        return "Продукт добавлен в корзину";
+    @GetMapping("/add/{id}")
+    public void addProductToCart(@RequestHeader(name = "username", required = false) String username, @PathVariable("id") Long id) {
+        basketService.addToBasket(username, id);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -48,9 +47,9 @@ public class BasketResource {
 
 
 
-    @DeleteMapping("/clear/{id}")
-    public void clearBasket(@PathVariable("id") long id) {
-        basketService.clearBasket(id);
+    @DeleteMapping("/clear")
+    public void clearBasket(@RequestHeader(name = "username", required = false) String username) {
+        basketService.clearBasket(username);
     }
 
     @GetMapping("/getItems/{id}")
@@ -60,9 +59,5 @@ public class BasketResource {
         return basketItemDtoList;
     }
 
-    @GetMapping("/getItems1/{id}")
-    public List<BasketItemDto> getItemsInBasket1(@PathVariable("id") long id) {
-        return basketItemService.getBasketItems(id);
-    }
 
 }

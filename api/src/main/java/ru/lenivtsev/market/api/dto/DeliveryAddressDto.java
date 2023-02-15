@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 public class DeliveryAddressDto {
     private Long id;
-    private Long userId;
+    private String username;
     private String address;
 }

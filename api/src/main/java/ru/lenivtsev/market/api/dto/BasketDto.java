@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 public class BasketDto {
 
     private Long id;
-    private Long userId;
+    private String username;
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
 
     public BasketDto(Long userId) {
-        this.userId = userId;
+        this.username = username;
     }
 }
