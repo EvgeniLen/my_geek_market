@@ -3,16 +3,11 @@ package ru.lenivtsev.market.core.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import ru.lenivtsev.market.api.dto.BasketDto;
 import ru.lenivtsev.market.api.dto.BasketItemDto;
-import ru.lenivtsev.market.api.dto.UserDto;
 import ru.lenivtsev.market.core.integrations.BasketServiceIntegration;
-import ru.lenivtsev.market.core.security.UserDetailsServiceImpl;
 import ru.lenivtsev.market.core.service.ProductService;
 
 import java.util.List;
@@ -22,7 +17,7 @@ import java.util.Optional;
 @RequestMapping("/shop")
 @RequiredArgsConstructor
 public class ShopController {
-    private final UserDetailsServiceImpl userDetailsService;
+
     private final ProductService productService;
     private final BasketServiceIntegration basketServiceIntegration;
 
@@ -33,14 +28,15 @@ public class ShopController {
             @RequestParam(required = false) Optional<Integer> page,
             @RequestParam(required = false) Optional<Integer> size,
             @RequestParam(required = false) Optional<String> sortField,
-            Model model) {
+            Model model,
+            @RequestHeader String username) {
         int pageValue = page.orElse(1) - 1;
         if (pageValue < 0) pageValue = 0;
         int sizeValue = size.orElse((10));
         String sortFiledValue = sortField.filter(s -> !s.isBlank()).orElse("id");
 
-        UserDto user = userDetailsService.getAuthentication().get();
-        BasketDto basketDto = basketServiceIntegration.getBasketForOwner(user.getId());
+        //UserDto user = userDetailsService.getAuthentication().get();
+        BasketDto basketDto = basketServiceIntegration.getBasketForOwner(username);
         List<BasketItemDto> basketItemsDto = basketServiceIntegration.getItemsInBasket(basketDto.getId());
         model.addAttribute("basket", basketDto);
         model.addAttribute("items", basketItemsDto);
@@ -50,8 +46,7 @@ public class ShopController {
 
     @GetMapping("/add/{id}")
     public String addProductToCart(@PathVariable("id") Long id) {
-        UserDto user = userDetailsService.getAuthentication().get();
-        basketServiceIntegration.addProductInBasket(user.getId(), id);
+        basketServiceIntegration.addProductInBasket(id);
         //basketService.addToBasket(id);
         return "redirect:/shop";
     }
@@ -61,10 +56,10 @@ public class ShopController {
         basketServiceIntegration.deleteItemInBasket(id);
         return "redirect:/shop";
     }
-    @GetMapping("/clear/{id}")
-    public String clearBasket(@PathVariable("id") long id) {
-        UserDto user = userDetailsService.getAuthentication().get();
-        basketServiceIntegration.clearBasket(user.getId());
+    @GetMapping("/clear")
+    public String clearBasket(@RequestHeader String username) {
+        //UserDto user = userDetailsService.getAuthentication().get();
+        basketServiceIntegration.clearBasket(username);
         return "redirect:/shop";
     }
 

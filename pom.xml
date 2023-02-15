@@ -10,6 +10,8 @@
         <module>api</module>
         <module>order-service</module>
         <module>auth-service</module>
+        <module>front-service</module>
+        <module>gateway-service</module>
     </modules>
 
     <groupId>ru.lenivtsev</groupId>

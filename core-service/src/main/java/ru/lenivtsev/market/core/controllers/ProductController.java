@@ -8,12 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.lenivtsev.market.api.dto.ProductDto;
-import ru.lenivtsev.market.api.dto.UserDto;
 import ru.lenivtsev.market.api.dto.exceptions.EntityNotFoundException;
-import ru.lenivtsev.market.core.security.UserDetailsServiceImpl;
-
 import ru.lenivtsev.market.core.service.ProductService;
-
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -26,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductController {
         private final ProductService productService;
-        private final UserDetailsServiceImpl userDetailsService;
+        //private final UserDetailsServiceImpl userDetailsService;
 
         @GetMapping
         public String listPage(
@@ -41,7 +37,7 @@ public class ProductController {
             int sizeValue = size.orElse((10));
             String sortFiledValue = sortField.filter(s -> !s.isBlank()).orElse("id");
 
-            UserDto user = userDetailsService.getAuthentication().get();
+            //UserDto user = userDetailsService.getAuthentication().get();
             //BasketDto basketDto = basketService.findBasketByOwner(user).get();
             //model.addAttribute("basket", basketDto);
             model.addAttribute("products", productService.findAllByFilter(productTitleFilter, productCostFilter, pageValue, sizeValue, sortFiledValue));

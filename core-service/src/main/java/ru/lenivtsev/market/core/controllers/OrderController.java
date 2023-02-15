@@ -5,12 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.lenivtsev.market.api.dto.OrderDto;
 import ru.lenivtsev.market.api.dto.OrderItemDto;
-import ru.lenivtsev.market.api.dto.UserDto;
 import ru.lenivtsev.market.core.integrations.OrderServiceIntegration;
-import ru.lenivtsev.market.core.security.UserDetailsServiceImpl;
 
 import java.util.List;
 
@@ -19,15 +18,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final UserDetailsServiceImpl userDetailsService;
+
 
     private final OrderServiceIntegration orderServiceIntegration;
 
     @GetMapping
-    public String orderPage(Model model){
+    public String orderPage(Model model, @RequestHeader String username){
         model.getAttribute("id");
-        UserDto user = userDetailsService.getAuthentication().get();
-        OrderDto order = orderServiceIntegration.getOrderByOwnerId(user.getId());
+
+        OrderDto order = orderServiceIntegration.getOrderByOwner(username);
         List<OrderItemDto> orderItems = order.getOrderItems();
         model.addAttribute("order", order);
         model.addAttribute("items", orderItems);

@@ -14,22 +14,19 @@ public class OrderResource {
 
     private final OrderService orderService;
 
-
-    @GetMapping("/{userId}")
-    public OrderDto listPage(@PathVariable("userId") Long userId){
-        return orderService.getOrderByOwnerId(userId);
+    @GetMapping
+    public OrderDto getOrder(@RequestHeader(name = "username", required = false) String username){
+        return orderService.getOrderByOwnerId(username);
     }
 
     @GetMapping("/proceedTo/{basketId}")
-    public String proceedToCheckout(@PathVariable("basketId") Long basketId) {
+    public void proceedToCheckout(@PathVariable("basketId") Long basketId) {
         orderService.addBasketToOrder(basketId);
-        return "Оформление заказа";
     }
 
     @DeleteMapping("/checkout/{id}")
-    public String checkoutOrder(@PathVariable("id") Long id) {
+    public void checkoutOrder(@PathVariable("id") Long id) {
         orderService.checkout(id);
-        return "Заказ оформлен!";
     }
 
 }
