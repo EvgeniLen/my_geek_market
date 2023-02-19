@@ -1,6 +1,7 @@
 package ru.lenivtsev.market.baskets.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import ru.lenivtsev.market.api.dto.BasketDto;
 import ru.lenivtsev.market.api.dto.BasketItemDto;
@@ -21,6 +22,8 @@ public class BasketService {
     private final BasketDtoMapper basketDtoMapper;
     private final BasketItemService basketItemService;
 
+    private final RedisTemplate<String, BasketDto> redisTemplate;
+
     private final ProductServiceIntegration productServiceIntegration;
 
     public void save(BasketDto basketDto) {
@@ -34,13 +37,18 @@ public class BasketService {
     public BasketDto findBasketByOwner(String username) {
         //UserDto user = userServiceIntegration.getUser();
         //long id = user.getId();
-        BasketDto basketDto = basketRepository.findBasketByUsername(username).map(basketDtoMapper::map).orElse(new BasketDto());
-        if (basketDto.getUsername() == null) {
-            basketDto.setUsername(username);
-            save(basketDto);
-            basketDto = basketDtoMapper.map(basketRepository.findBasketByUsername(username).get());
+        BasketDto basketDto;
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(username))){
+            basketDto = basketRepository.findBasketByUsername(username).map(basketDtoMapper::map).orElse(new BasketDto());
+            if (basketDto.getUsername() == null) {
+                basketDto.setUsername(username);
+                save(basketDto);
+                basketDto = basketDtoMapper.map(basketRepository.findBasketByUsername(username).get());
+            }
+            redisTemplate.opsForValue().set(username, basketDto);
         }
-        return basketDto;
+
+        return redisTemplate.opsForValue().get(username);
     }
 
    // @Transactional
@@ -79,5 +87,6 @@ public class BasketService {
     public void clearBasket(String username) {
         //basketRepository.deleteById(id);
         basketRepository.deleteById(basketRepository.findBasketByUsername(username).get().getId());
+        redisTemplate.delete(username);
     }
 }
