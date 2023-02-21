@@ -1,20 +1,19 @@
 package ru.lenivtsev.market.orders.servises;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ru.lenivtsev.market.api.dto.BasketDto;
 import ru.lenivtsev.market.api.dto.OrderDto;
-import ru.lenivtsev.market.api.dto.OrderItemDto;
 import ru.lenivtsev.market.orders.integrations.BasketServiceIntegration;
+import ru.lenivtsev.market.orders.listener.OrderEvent;
 import ru.lenivtsev.market.orders.model.Order;
-import ru.lenivtsev.market.orders.model.mapper.OrderItemMapper;
 import ru.lenivtsev.market.orders.model.mapper.OrderMapper;
 import ru.lenivtsev.market.orders.repositories.OrderRepository;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,7 @@ public class OrderService {
     private final BasketServiceIntegration basketServiceIntegration;
     private final OrderMapper orderMapper;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void addBasketToOrder(Long basketId) {
@@ -59,6 +59,8 @@ public class OrderService {
         orderMapper.linkOrderItems(order);
         order.setDeliveryPrice(new BigDecimal(5));
         orderRepository.save(order);
+        OrderEvent orderEvent = new OrderEvent(this, order);
+        applicationEventPublisher.publishEvent(orderEvent);
     }
     public OrderDto getOrderByOwnerId(String username) {
         return orderMapper.map(orderRepository.findOrderByUsername(username));
@@ -70,6 +72,7 @@ public class OrderService {
         basketServiceIntegration.clearBasket(order.getUsername());
         order.setStatus(2L);
         save(order);
+
     }
 
 }

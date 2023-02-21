@@ -40,6 +40,9 @@ public class Order {
     @Column(name = "status_id")
     private Long status;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "price")
     private BigDecimal price;
 
