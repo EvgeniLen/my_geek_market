@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import ru.lenivtsev.market.api.dto.BasketDto;
 import ru.lenivtsev.market.api.dto.OrderDto;
+import ru.lenivtsev.market.orders.identityMaps.UnitOfOrder;
 import ru.lenivtsev.market.orders.integrations.BasketServiceIntegration;
 import ru.lenivtsev.market.orders.listener.OrderEvent;
 import ru.lenivtsev.market.orders.model.Order;
@@ -24,6 +25,7 @@ public class OrderService {
     private final BasketServiceIntegration basketServiceIntegration;
     private final OrderMapper orderMapper;
 
+    private final UnitOfOrder unitOfOrder;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
@@ -63,7 +65,12 @@ public class OrderService {
         applicationEventPublisher.publishEvent(orderEvent);
     }
     public OrderDto getOrderByOwnerId(String username) {
-        return orderMapper.map(orderRepository.findOrderByUsername(username));
+        Order order = unitOfOrder.getOrder(username);
+        if (unitOfOrder.getOrder(username)==null){
+            order = orderRepository.findOrderByUsername(username);
+            unitOfOrder.addOrder(order);
+        }
+        return orderMapper.map(order);
     }
 
 
